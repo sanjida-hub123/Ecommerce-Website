@@ -648,7 +648,7 @@ footer .Copyright {
     }
 }
 
-@media (max-width:477px) {
+@media (max-width:500px) {
     #header {
         padding: 10px 30px;
     }
