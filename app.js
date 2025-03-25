@@ -35,3 +35,14 @@ smallimg[3].onclick = function () {
 }
 // sproduct section end
 
+// Newsletter section start
+function showAlert() {
+    let emailInput = document.getElementById("email");
+    if (emailInput.value) {
+        alert("Thank you for signing up! We'll keep you updated.");
+        emailInput.value = ""; // Clears the input field
+    } else {
+        alert("Please enter your email address.");
+    }
+}
+// Newsletter section end
