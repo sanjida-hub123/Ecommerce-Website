@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ecommerce Website</title>
+    <title>Cart | Ecommerce Website</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -33,49 +33,26 @@
 
     <!-- hero section start -->
     <section id="page-header" class="about-header">
-        <h2>#let,s talk</h2>
-        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
+        <h2>#let's talk</h2>
+        <p>Explore your cart and proceed with checkout.</p>
     </section>
     <!-- hero section end -->
 
     <!-- cart section start -->
     <section id="cart" class="section-p1">
-        <table width="100%">
+        <table width="100%" id="cart-table">
             <thead>
                 <tr>
                     <td>Remove</td>
                     <td>Image</td>
-                    <td>product</td>
+                    <td>Product</td>
                     <td>Price</td>
                     <td>Quantity</td>
                     <td>Subtotal</td>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td><a href="#"><i class="far fa-times-circle"></i></a></td>
-                    <td><img src="./img/products/f1.jpg" alt=""></td>
-                    <td>Cartoon Astronaut T-shirts</td>
-                    <td>$74</td>
-                    <td><input type="number" value="1"></td>
-                    <td>$74</td>
-                </tr>
-                <tr>
-                    <td><a href="#"><i class="far fa-times-circle"></i></a></td>
-                    <td><img src="./img/products/f2.jpg" alt=""></td>
-                    <td>Cartoon Astronaut T-shirts</td>
-                    <td>$74</td>
-                    <td><input type="number" value="1"></td>
-                    <td>$74</td>
-                </tr>
-                <tr>
-                    <td><a href="#"><i class="far fa-times-circle"></i></a></td>
-                    <td><img src="./img/products/f3.jpg" alt=""></td>
-                    <td>Cartoon Astronaut T-shirts</td>
-                    <td>$74</td>
-                    <td><input type="number" value="1"></td>
-                    <td>$74</td>
-                </tr>
+            <tbody id="cart-items">
+                <!-- Cart items will be inserted here dynamically -->
             </tbody>
         </table>
     </section>
@@ -95,7 +72,7 @@
             <table>
                 <tr>
                     <td>Cart Subtotals</td>
-                    <td>$74</td>
+                    <td id="cart-subtotal">$0</td>
                 </tr>
                 <tr>
                     <td>Shipping</td>
@@ -103,10 +80,10 @@
                 </tr>
                 <tr>
                     <td><strong>Total</strong></td>
-                    <td><strong>$74</strong></td>
+                    <td><strong id="total-amount">$0</strong></td>
                 </tr>
             </table>
-            <button class="normal">Proceed to checkout</button>
+            <button class="normal" id="checkout-button">Proceed to checkout</button>
         </div>
     </section>
     <!-- cart add section end -->
@@ -116,9 +93,9 @@
         <div class="col">
             <img class="logo" src="./img/logo.png" alt="">
             <h4>Contact</h4>
-            <p><strong>Address:</strong>Barlekha,moulvibazer</p>
-            <p><strong>Phone:</strong>01744722328</p>
-            <p><strong>Hours:</strong>10:00 - 18:00, Mon - Sat</p>
+            <p><strong>Address:</strong> Barlekha, Moulvibazer</p>
+            <p><strong>Phone:</strong> 01744722328</p>
+            <p><strong>Hours:</strong> 10:00 - 18:00, Mon - Sat</p>
             <div class="follow">
                 <h4>Follow Us</h4>
                 <div class="icon">
@@ -138,7 +115,6 @@
             <a href="#">Terms & Conditions</a>
             <a href="#">Contact Us</a>
         </div>
-
         <div class="col">
             <h4>My Account</h4>
             <a href="#">Sign In</a>
@@ -147,15 +123,14 @@
             <a href="#">Track My Order</a>
             <a href="#">Help</a>
         </div>
-
         <div class="col install">
             <h4>Install App</h4>
-            <p>Form App Store Or Google Play</p>
+            <p>From App Store Or Google Play</p>
             <div class="row">
                 <img src="./img/pay/app.jpg" alt="">
                 <img src="./img/pay/play.jpg" alt="">
             </div>
-            <p>Secured Payment Geteways</p>
+            <p>Secured Payment Gateways</p>
             <img src="./img/pay/pay.png" alt="">
         </div>
         <div class="Copyright">
@@ -165,7 +140,90 @@
     <!-- footer section end -->
 
     <!-- js cdn -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let cartItemsContainer = document.getElementById('cart-items');
+            let cartSubtotal = document.getElementById('cart-subtotal');
+            let totalAmount = document.getElementById('total-amount');
+
+            function updateCartUI() {
+                cartItemsContainer.innerHTML = '';
+                let totalPrice = 0;
+
+                if (cart.length === 0) {
+                    cartItemsContainer.innerHTML = "<tr><td colspan='6'>Your cart is empty.</td></tr>";
+                    cartSubtotal.textContent = `$0.00`;
+                    totalAmount.textContent = `$0.00`;
+                    return;
+                }
+
+                cart.forEach((item, index) => {
+                    let price = parseFloat(item.price); // Ensure price is a number
+                    let quantity = parseInt(item.quantity, 10); // Ensure quantity is an integer
+
+                    // Check if price or quantity are NaN and assign default values
+                    if (isNaN(price)) price = 0;
+                    if (isNaN(quantity)) quantity = 1;
+
+                    let row = document.createElement('tr');
+                    row.innerHTML = `
+                <td><button class="remove-item" data-index="${index}">Remove</button></td>
+                <td><img src="${item.image}" alt="${item.name}" width="50"></td>
+                <td>${item.name}</td>
+                <td>$${price.toFixed(2)}</td>
+                <td>
+                    <input type="number" value="${quantity}" min="1" data-index="${index}" class="item-quantity">
+                </td>
+                <td class="item-subtotal">$${(price * quantity).toFixed(2)}</td>
+            `;
+                    cartItemsContainer.appendChild(row);
+
+                    // Update total price
+                    totalPrice += price * quantity;
+                });
+
+                // Update cart totals
+                cartSubtotal.textContent = `$${totalPrice.toFixed(2)}`;
+                totalAmount.textContent = `$${totalPrice.toFixed(2)}`;
+            }
+
+            // Quantity Change Event
+            cartItemsContainer.addEventListener('input', (event) => {
+                if (event.target.classList.contains('item-quantity')) {
+                    let index = event.target.dataset.index;
+                    let newQuantity = parseInt(event.target.value, 10);
+
+                    if (newQuantity < 1) newQuantity = 1;
+
+                    cart[index].quantity = newQuantity;
+                    localStorage.setItem('cart', JSON.stringify(cart)); // Save changes to localStorage
+                    updateCartUI();
+                }
+            });
+
+            // Remove Item Event
+            cartItemsContainer.addEventListener('click', (event) => {
+                if (event.target.classList.contains('remove-item')) {
+                    let index = event.target.dataset.index;
+                    cart.splice(index, 1); // Remove from cart array
+                    localStorage.setItem('cart', JSON.stringify(cart)); // Save changes to localStorage
+                    updateCartUI();
+                }
+            });
+
+            updateCartUI(); // Initialize Cart UI
+        });
+
+    </script>
+
+
     <script src="app.js"></script>
+
+
+    <div id="cart-container"></div>
+
 </body>
 
 </html>

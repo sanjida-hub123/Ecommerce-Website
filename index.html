@@ -20,7 +20,7 @@
                 <li><a href="blog.html">Blog</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="contact.html">Contact</a></li>
-                <li id="lg-bag"><a href="cart.html"><i class="fa-solid fa-bag-shopping"></i></a></li>
+                <li id="lg-bag"><a href="cart.html"><i class="fa-solid fa-bag-shopping"></i><span class="cart-count">0</span></a></li>
                 <a href="#" id="close"><i class="fa-solid fa-xmark"></i></a>
             </ul>
         </div>
@@ -91,7 +91,7 @@
                     </div>
                     <h4>$74</h4>
                 </div>
-                <a href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+                <a href="#" class="add-to-cart" data-product="f1"><i class="fa-solid fa-cart-shopping"></i></a>
             </div>
             <div class="pro">
                 <img src="./img/products/f2.jpg" alt="">
@@ -107,7 +107,7 @@
                     </div>
                     <h4>$74</h4>
                 </div>
-                <a href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+                <a href="#" class="add-to-cart" data-product="f1"><i class="fa-solid fa-cart-shopping"></i></a>
             </div>
             <div class="pro">
                 <img src="./img/products/f3.jpg" alt="">
@@ -123,13 +123,13 @@
                     </div>
                     <h4>$74</h4>
                 </div>
-                <a href="#"><i class="fa-solid fa-cart-shopping"></i></a>
-            </div>
+                <a href="#" class="add-to-cart" data-product="f1"><i class="fa-solid fa-cart-shopping"></i></a>
+             </div>
             <div class="pro">
                 <img src="./img/products/f4.jpg" alt="">
                 <div class="des">
                     <span>adidas</span>
-                    <h5>Cartoon Astronaut T-Shirts</h5>
+                    <h5>Cartoon Astronaut</h5>
                     <div class="star">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
@@ -137,9 +137,9 @@
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                     </div>
-                    <h4>$74</h4>
+                    <h4>$7</h4>
                 </div>
-                <a href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+                <a href="#" class="add-to-cart" data-product="f1"><i class="fa-solid fa-cart-shopping"></i></a>
             </div>
             <div class="pro">
                 <img src="./img/products/f5.jpg" alt="">
@@ -155,7 +155,7 @@
                     </div>
                     <h4>$74</h4>
                 </div>
-                <a href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+                <a href="#" class="add-to-cart" data-product="f1"><i class="fa-solid fa-cart-shopping"></i></a>
             </div>
             <div class="pro">
                 <img src="./img/products/f6.jpg" alt="">
@@ -171,7 +171,7 @@
                     </div>
                     <h4>$74</h4>
                 </div>
-                <a href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+                <a href="#" class="add-to-cart" data-product="f1"><i class="fa-solid fa-cart-shopping"></i></a>
             </div>
             <div class="pro">
                 <img src="./img/products/f7.jpg" alt="">
@@ -187,7 +187,7 @@
                     </div>
                     <h4>$74</h4>
                 </div>
-                <a href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+                <a href="#" class="add-to-cart" data-product="f1"><i class="fa-solid fa-cart-shopping"></i></a>
             </div>
             <div class="pro">
                 <img src="./img/products/f8.jpg" alt="">
@@ -203,7 +203,7 @@
                     </div>
                     <h4>$74</h4>
                 </div>
-                <a href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+                <a href="#" class="add-to-cart" data-product="f1"><i class="fa-solid fa-cart-shopping"></i></a>
             </div>
         </div>
     </section>
@@ -454,6 +454,43 @@
     <!-- footer section end -->
 
     <!-- js cdn -->
+
+    <script>
+        // This function is triggered when an item is added to the cart
+        document.querySelectorAll('.add-to-cart').forEach(item => {
+            item.addEventListener('click', event => {
+                event.preventDefault();
+                let product = event.target.closest('.pro');
+                let productName = product.querySelector('h5').textContent;
+                let productPrice = product.querySelector('h4').textContent;
+        
+                // Store cart items in localStorage (or you could use sessionStorage)
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                cart.push({
+                    name: productName,
+                    price: productPrice
+                });
+        
+                // Save updated cart to localStorage
+                localStorage.setItem('cart', JSON.stringify(cart));
+        
+                // Update the cart icon (optional)
+                updateCartIcon();
+            });
+        });
+        
+        // Update cart icon with the number of items in the cart
+        function updateCartIcon() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let cartCount = cart.length;
+            document.getElementById('lg-bag').innerHTML = `<a href="cart.html"><i class="fa-solid fa-bag-shopping"></i><span class="cart-count">${cartCount}</span></a>`;
+        }
+        
+        // Call the function to update cart icon on page load
+        updateCartIcon();
+        </script>
+        
+    
     <script src="app.js"></script>
 </body>
 
